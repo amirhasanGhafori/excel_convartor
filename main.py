@@ -1,5 +1,5 @@
 
-import numpy as np;
+from tqdm import tqdm
 import pandas as pd;
 import re
 
@@ -29,7 +29,7 @@ for i in result_array:
     elif i=='چک':
         df[i] = df['نام و نام خانوادگی']
     else:
-        print("ورودی نامعتبر است")
+        pass
 
 grouped = df.groupby('شهر')
 
@@ -74,11 +74,12 @@ df.columns = pd.MultiIndex.from_tuples([
 
 df.to_excel(output_file, index=True)
 
+with tqdm(total=1, desc="Writing to Excel") as pbar:
+    df.to_excel(output_file, index=True)
+    pbar.update(1)
 
 #شیت بندی با استفاده از گروه ها
 # with pd.ExcelWriter(output_file) as writer:
 #     for name,group in grouped:
 #         group.to_excel(writer,sheet_name=name,index=False)
 
-
-print(f"فایل اکسل با شیت ها جداگانه ساخته شد")
