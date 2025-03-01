@@ -2,6 +2,7 @@
 from tqdm import tqdm
 import pandas as pd;
 import re
+import methods.any as any
 
 # رشته ورودی
 input_string = "سفته داده-چک داده,خرید-فروش"
@@ -15,9 +16,10 @@ result_array = cleaned_string.split()
 
 file_path = 'C:/Users/Amirhasan/Desktop/excel_convertor/excel_data/002_Excel_Data_For_Practice(3).xlsx'
 file_path_2 = 'C:/Users/Amirhasan/Desktop/excel_convertor/excel_data/005_Excel_Data_For_Practice.xlsx'
-
+location_path = 'C:/Users/Amirhasan/Desktop/excel_convertor/excel_data/location-file.xlsx'
 
 df = pd.read_excel(file_path)
+file_location = pd.read_excel(location_path)
 df_file2 = pd.read_excel(file_path_2)
 for i in result_array:
     if i=='فروش':
@@ -34,6 +36,8 @@ for i in result_array:
 grouped = df.groupby('شهر')
 
 
+
+
 output_file = 'C:/Users/Amirhasan/Desktop/excel_convertor/result/converted-data.xlsx'
 
 # df['شماره پرسنلی'] = df['کدپرسنلی']
@@ -46,7 +50,8 @@ df['بخش مشتری'] = df_file2['بخش مشتری']
 df['نام مستعار'] = df['نام و نام خانوادگی'].apply(lambda x: x.split()[0])
 df['فامیلی'] = df['نام و نام خانوادگی'].apply(lambda x: x.split()[-1])
 
-
+df['دسترسی کاربران'] = df['عنوان شغلی'].apply(lambda x: any.check_permission_worker(x))
+df['کد ایستا محل'] = (df['استان']+'+'+df['شهر']).apply(lambda x : any.check_location_worker(x,file_location))
 #change all rename column names
 df.columns = pd.MultiIndex.from_tuples([
     ('اطلاعات پرسنلی', 'شماره پرسنلی'),
@@ -69,8 +74,14 @@ df.columns = pd.MultiIndex.from_tuples([
     ('اطلاعات شغلی', 'چک'),
     ('اطلاعات شغلی', 'خرید'),
     ('اطلاعات شغلی', 'فروش'),
-    ('اطلاعات شغلی', 'بخش مشتری')
+    ('اطلاعات شغلی', 'بخش مشتری'),
+    ('اطلاعات شغلی', 'دسترسی کاربران'),
+    ('اطلاعات شغلی', 'استان'),
+    ('اطلاعات شغلی', 'کد ایستا محل'),
 ])
+
+
+
 
 df.to_excel(output_file, index=True)
 
